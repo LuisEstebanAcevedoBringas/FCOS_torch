@@ -35,7 +35,7 @@ plt.plot ( epoch, b, 'b', label='Loss Transfer Learning' )
 epoch = range(1, len(c) + 1, 1)
 plt.plot ( epoch, c, 'g', label='Loss From Scratch' )
 #plt.plot ( epochs, data['loss_v'],  'b', label='Loss avg')
-plt.title ('Losses SSD LITE')
+plt.title ('Losses FCOS')
 plt.ylabel('loss')
 plt.xlabel('epochs')
 
