@@ -19,7 +19,15 @@ def FCOS_TransferLearning(num_classes):
     #Returns a model pre-trained on COCO train2017
     model = torchvision.models.detection.fcos_resnet50_fpn(pretrained=True)
     
-    model.head.classification_head = FCOSClassificationHead(num_classes)
+    #Congelar todos los pesos
+    for p in model.parameters():
+        p.requires_grad = False
+
+    in_features = det_utils.retrieve_out_channels(model.backbone, (300, 300))
+
+    anchors = model.anchor_generator.num_anchors_per_location()
+
+    model.head.classification_head = FCOSClassificationHead(in_features, anchors, num_classes)
 
     print(model)
     return model
@@ -27,9 +35,13 @@ def FCOS_TransferLearning(num_classes):
 #FCOS FineTuning
 def FCOS_FineTuning(num_classes):
 
-    model = torchvision.models.detection.fcos_resnet50_fpn(pretrained=False)
+    model = torchvision.models.detection.fcos_resnet50_fpn(pretrained=True)
     
-    model.head.classification_head = FCOSClassificationHead(num_classes)
+    in_features = det_utils.retrieve_out_channels(model.backbone, (300, 300))
+
+    anchors = model.anchor_generator.num_anchors_per_location()
+    
+    model.head.classification_head = FCOSClassificationHead(in_features, anchors, num_classes)
 
     print(model)
     return model
@@ -39,7 +51,11 @@ def FCOS_FromScratch(num_classes):
 
     model = torchvision.models.detection.fcos_resnet50_fpn(pretrained=False)
     
-    model.head.classification_head = FCOSClassificationHead(num_classes)
+    in_features = det_utils.retrieve_out_channels(model.backbone, (300, 300))
+
+    anchors = model.anchor_generator.num_anchors_per_location()
+
+    model.head.classification_head = FCOSClassificationHead(in_features, anchors, num_classes)
 
     print(model)
     return model
