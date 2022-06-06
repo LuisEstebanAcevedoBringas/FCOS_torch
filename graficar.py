@@ -4,9 +4,9 @@ import json
 
 epoch = 232
 
-filename2 = '/home/bringascastle/Escritorio/resultados_ssd_lite_transfer/losses.json'
-filename1 = '//home/bringascastle/Escritorio/resultados_ssd_lite_finetunning/losses.json'
-filename3 = '/home/bringascastle/Documentos/repos/SSD/results/losses_FROM.json'
+filename2 = '/home/bringascastle/Escritorio/resultados_ssd_lite_transfer/losses.json' #TransferLearning
+filename1 = '//home/bringascastle/Escritorio/resultados_ssd_lite_finetunning/losses.json' #FineTuning
+filename3 = '/home/bringascastle/Documentos/repos/SSD/results/losses_FROM.json' #FromScratch
 
 with open(filename1, "r") as file:
     finetunning = json.load(file)

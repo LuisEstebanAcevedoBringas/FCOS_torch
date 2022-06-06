@@ -110,8 +110,6 @@ for i in list_cut:
 
     #get_times(time.time()- times, 'draw')
 
-    #
-
     #get_times(time.time() - times_general, 'general')
 
     img = torchvision.transforms.ToPILImage()(img)

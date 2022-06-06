@@ -1,6 +1,8 @@
 import json
 
 filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json'
+#filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json' #FineTuning
+#filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json' #FromScratch
 
 with open(filename, "r") as file:
     datos = json.load(file)

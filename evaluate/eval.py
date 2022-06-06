@@ -13,7 +13,7 @@ keep_difficult = True  # difficult ground truth objects must always be considere
 batch_size = 64
 workers = 4
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-checkpoint = '/home/bringascastle/Documentos/repos/SSD/bin/prueba_t.pth.rar'
+checkpoint = '/home/bringascastle/Documentos/repos/SSD/checkpoints/prueba_t.pth.rar'
 
 # Load model checkpoint that is to be evaluated
 checkpoint = torch.load(checkpoint)

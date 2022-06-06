@@ -10,9 +10,9 @@ import time
 
 def save_model(epoch, model, optim, name = None):
     if name is None:
-        filename = '/home/bringascastle/Documentos/repos/SSD/bin/prueba_f_lr.pth.rar'
+        filename = '/home/bringascastle/Documentos/repos/SSD/checkpoints/prueba_f_lr.pth.rar'
     else:
-        filename = '/home/bringascastle/Documentos/repos/SSD/bin/{}.pth.rar'.format(name)
+        filename = '/home/bringascastle/Documentos/repos/SSD/checkpoints/{}.pth.rar'.format(name)
     
     state = {
         'epoch': epoch,
@@ -110,7 +110,7 @@ def main(checkpoint = None):
 
         if epoch == 160:
             save_model(epoch, model, optimizer, "prueba_160_f")
-        # evaluate on the test dataset
+        #evaluate on the test dataset
         #evaluate(model, data_loader_test, device=device)
         save_model(epoch, model, optimizer)
 
