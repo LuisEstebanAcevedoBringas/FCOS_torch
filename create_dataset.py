@@ -6,7 +6,6 @@ import torch
 import json
 import os
 
-
 class PascalVOCDataset(Dataset):
     """
     A PyTorch Dataset class to be used in a PyTorch DataLoader to create batches.

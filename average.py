@@ -5,7 +5,6 @@ filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json'
 with open(filename, "r") as file:
     datos = json.load(file)
 
-
 def parserFloat(array):
     return [float(v) for v in array] 
 
