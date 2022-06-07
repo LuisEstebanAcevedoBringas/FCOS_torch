@@ -20,13 +20,13 @@
    - linea 51
      - Se debe de poner el nombre del diccionario donde se van a guardar los valores de las perdidas (Este diccionario debe de estar dentro del mismo archivo que mandamos a llamar en la linea 11)
 
-- evaluate/detect/eval.py
+- evaluate/eval.py
    - linea 11
    - linea 16 
 
-- ./draw.py
-   - linea 33
-   - linea 54
+- ./utils/draw.py
+   - linea 33 y 54
+     - Se debe de actualizar la ruta de donde esta el **.json** 
    - linea 65
    - linea 78
 

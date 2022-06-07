@@ -1,8 +1,8 @@
 import json
 
-filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json'
-#filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json' #FineTuning
-#filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json' #FromScratch
+filename = '/home/bringascastle/Documentos/repos/SSD/results/Losses_TransferLearning.json'
+#filename = '/home/bringascastle/Documentos/repos/SSD/results/Losses_FineTuning.json' #FineTuning
+#filename = '/home/bringascastle/Documentos/repos/SSD/results/Losses_FromScratch.json' #FromScratch
 
 with open(filename, "r") as file:
     datos = json.load(file)
