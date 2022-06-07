@@ -14,8 +14,11 @@
 2) Para hacer FineTuning se debe usar la funcion "FCOS_FineTuning()" de la linea 58.
 3) Para hacer FromScratch se debe usar la funcion "FCOS_FromScratch()" de la linea 59.
 
-- engine.py
+- ./preference/detect/engine.py
    - linea 11
+     - Se debe de actualizar la ruta donde esta el archivo **.json** que guardara los valores de las perdidas
+   - linea 51
+     - Se debe de poner el nombre del diccionario donde se van a guardar los valores de las perdidas (Este diccionario debe de estar dentro del mismo archivo que mandamos a llamar en la linea 11)
 
 - evaluate/detect/eval.py
    - linea 11
