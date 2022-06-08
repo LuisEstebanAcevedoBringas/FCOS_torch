@@ -29,9 +29,11 @@
 
 - **./utils/draw.py**
    - linea 33 y 54
-     - Se debe de actualizar la ruta de donde esta el **.json** 
+     - Se debe de actualizar el path de donde esta el **.json** 
    - linea 65
+     - Se debe de actualizar el path del **checkpoint** que queremos utilizar para dibujar las bounding boxes.
    - linea 78
+     - Se debe de actualizar el path de las **imagenes** que queremos utilizar para dibujar las bounding boxes.
 
 - **./average.py**
    - linea 3

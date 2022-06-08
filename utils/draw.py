@@ -30,7 +30,7 @@ distinct_colors = ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231', '#911e
 
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
 
-filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json'
+filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/losses.json'
 
 # lab = ['NMS', 'general', 'draw', 'red']
 
@@ -51,7 +51,7 @@ normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
 
 #Get time TransferLearning
 def get_times(val, array):
-    filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json'
+    filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_TransferLearning.json'
     entry1 = str(val)
     # 1. Read file contents
     with open(filename, "r") as file:
@@ -62,7 +62,7 @@ def get_times(val, array):
     with open(filename, "w") as file:
         json.dump(datos, file)
 
-chk = torch.load('/home/bringascastle/Documentos/repos/SSD/bin/prueba_t_10.pth.rar')
+chk = torch.load('/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/prueba_60_f.pth.rar')
 
 star = chk['epoch'] + 1
 print('Ultima epoca de entrenamiento: {}'.format(star))
@@ -73,9 +73,9 @@ model.eval()
 model.to(device)
 
 list_r = list(range(0, 4952))
-random.shuffle(list_r)
+#random.shuffle(list_r)
 list_cut = list_r[0:32]
-list_path = glob.glob('/home/bringascastle/Escritorio/datasets/VOC_datasets/test_2007/JPEGImages/*.jpg')
+list_path = glob.glob('/home/fp/FPM/DataBase/VOCtest_06-Nov-2007/VOCdevkit/VOC2007/JPEGImages/*.jpg')
 
 for i in list_cut:
     image_prob = read_image(list_path[i])
