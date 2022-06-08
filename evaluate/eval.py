@@ -1,5 +1,7 @@
+from utils_ObjectDetection import get_batch_statistics,ap_per_class
 from create_dataset import VOCDataset, PascalVOCDataset
 from preferences.detect.utils import collate_fn
+from transformation import get_transform
 from evaluate.utils_map import *
 from pprint import PrettyPrinter
 from tqdm import tqdm
@@ -24,11 +26,63 @@ model = model.to(device)
 model.eval()
 
 # Load test data
-test_dataset = PascalVOCDataset(data_folder,
-                                split='test',
-                                keep_difficult=keep_difficult)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
-                                          collate_fn=test_dataset.collate_fn, num_workers=workers, pin_memory=True)
+# test_dataset = PascalVOCDataset(data_folder,
+#                                 split='test',
+#                                 keep_difficult=keep_difficult)
+# test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
+#                                           collate_fn=test_dataset.collate_fn, num_workers=workers, pin_memory=True)
+
+
+dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TEST', get_transform(True))
+
+data_loader = torch.utils.data.DataLoader(
+    dataset, batch_size=16, shuffle=False, num_workers=0,
+    collate_fn=collate_fn)
+
+def meanAP(data_loader_test, model):
+    
+    labels = []
+    preds_adj_all = []
+    annot_all = []
+
+    for im, annot in tqdm(data_loader_test, position = 0, leave = True):
+        im = list(img.to(device) for img in im)
+        annot = [{k: v.to(device) for k, v in t.items()} for t in annot]
+
+        for t in annot:
+            labels += t['labels']
+
+        with torch.no_grad():
+            preds_adj = make_prediction(model, im, 0.5)
+            preds_adj = [{k: v.to(device) for k, v in t.items()} for t in preds_adj]
+            preds_adj_all.append(preds_adj)
+            annot_all.append(annot)
+    
+    sample_metrics = []
+    for batch_i in range(len(preds_adj_all)):
+        sample_metrics += get_batch_statistics(preds_adj_all[batch_i], annot_all[batch_i], iou_threshold=0.5) 
+    true_positives, pred_scores, pred_labels = [torch.cat(x, 0) for x in list(zip(*sample_metrics))]  # 배치가 전부 합쳐짐
+    precision, recall, AP, f1, ap_class = ap_per_class(true_positives, pred_scores, pred_labels, torch.tensor(labels))
+    mAP = torch.mean(AP)
+    
+    print(f'mAP : {mAP}')
+    print(f'AP : {AP}')
+
+    
+
+def make_prediction(model, img, threshold):
+    model.eval()
+    preds = model(img)
+    for id in range(len(preds)) :
+        idx_list = []
+
+        for idx, score in enumerate(preds[id]['scores']) :
+            if score > threshold :
+                idx_list.append(idx)
+
+        preds[id]['boxes'] = preds[id]['boxes'][idx_list]
+        preds[id]['labels'] = preds[id]['labels'][idx_list]
+        preds[id]['scores'] = preds[id]['scores'][idx_list]
 
 #-----------
 def evaluate(test_loader, model):
@@ -84,7 +138,8 @@ def evaluate(test_loader, model):
 
 #-------------
 def runEvaluate():
-    evaluate(test_loader, model)
+    #evaluate(test_loader, model)
+    meanAP(data_loader, model)
 
 #-------------
 def getBatchesImage(batch, item):
