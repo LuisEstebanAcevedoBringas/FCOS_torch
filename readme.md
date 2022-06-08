@@ -36,10 +36,9 @@
      - Se debe de actualizar el path de las **imagenes** que queremos utilizar para dibujar las bounding boxes.
 
 - **./average.py**
-   - linea 3
+   - linea 3, 4 o 5
+     - Se debe de actualizar el path de los **json** donde se almacenaron los losses del metodo de entrenamiento (TF, FT, FS)
 
 - **./graficar.py**
-   - linea 8
-   - linea 9
-   - linea 10
-
+   - linea 8, 9 y 10
+     - Se debe de actualizar de path de los **json** donde se almacenaron los losses del metodo de entrenamiento (TF, FT, FS) para poder graficarlos.
