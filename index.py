@@ -10,9 +10,13 @@ import time
 
 def save_model(epoch, model, optim, name = None):
     if name is None:
-        filename = '/home/bringascastle/Documentos/repos/SSD/checkpoints/prueba_f_lr.pth.rar'
+        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/prueba_TransferLearning.pth.rar'
+        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/prueba_FineTuning.pth.rar'
+        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FromScratch/prueba_FromScratch.pth.rar'
     else:
-        filename = '/home/bringascastle/Documentos/repos/SSD/checkpoints/{}.pth.rar'.format(name)
+        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/{}.pth.rar'.format(name)
+        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/{}.pth.rar'.format(name)
+        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FromScratch/{}.pth.rar'.format(name)
     
     state = {
         'epoch': epoch,
@@ -22,9 +26,9 @@ def save_model(epoch, model, optim, name = None):
 
     torch.save(state, filename)
 
-array = ["loss_value", "NMS"]
+array = ["Losses_TransferLearning"]
 
-filename = './results/losses.json'
+filename = './results/Losses_TransferLearning.json'
 with open(filename, "r") as file:
     datos = json.load(file)
 for i in array:
@@ -44,7 +48,7 @@ def main(checkpoint = None):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     num_classes = 21
 
-    dataset = VOCDataset('/home/bringascastle/Documentos/repos/SSD/JSONfiles', 'TRAIN', get_transform(True))
+    dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TRAIN', get_transform(True))
     
     data_loader = torch.utils.data.DataLoader(
         dataset, batch_size=8, shuffle=True, num_workers=4,
@@ -53,9 +57,9 @@ def main(checkpoint = None):
     if checkpoint is None:
         
         start_epoch = 0
-        model = FCOS_TransferLearning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento
-        #model = FCOS_FineTuning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento
-        #model = FCOS_FromScratch(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento
+        model = FCOS_TransferLearning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a TL
+        #model = FCOS_FineTuning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a FT
+        #model = FCOS_FromScratch(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a FS
         model.to(device)
 
         biases = []
@@ -111,7 +115,7 @@ def main(checkpoint = None):
         if epoch == 160:
             save_model(epoch, model, optimizer, "prueba_160_f")
         #evaluate on the test dataset
-        #evaluate(model, data_loader_test, device=device)
+        #evaluate(model, data_loader, device=device)
         save_model(epoch, model, optimizer)
 
     tiempo_entrenamiento = time.time() - tiempo_entrenamiento
@@ -119,4 +123,4 @@ def main(checkpoint = None):
 
     print("Tiempo_entrenamiento: ", tiempo_entrenamiento)
 
-main()
+main('/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/prueba_TransferLearning.pth.rar')

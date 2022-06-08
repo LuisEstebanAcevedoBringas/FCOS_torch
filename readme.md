@@ -6,34 +6,37 @@
    - [2007 test](http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar)
    - [2012 trainval](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar)
 
-
 ## Instrucciones
-
 ### Para cambiar el metodo de entrenamiento se debe cambiar lo siguiente en el archivo ./index.py:
 1) Para hacer TransferLearning se debe usar la funcion "FCOS_TransferLearning()" de la linea 57.
 2) Para hacer FineTuning se debe usar la funcion "FCOS_FineTuning()" de la linea 58.
 3) Para hacer FromScratch se debe usar la funcion "FCOS_FromScratch()" de la linea 59.
 
-- ./preference/detect/engine.py
-   - linea 11
+- **./index.py**
+  - linea 126
+    - Si al main() se le pasa el path de un checkpoint se retomará el entrenamiento desde el checkpoint, si no se le pasa nada, empezará desde la época 0
+
+- **./preference/detect/engine.py**
+   - linea 13
      - Se debe de actualizar la ruta donde esta el archivo **.json** que guardara los valores de las perdidas
-   - linea 51
+   - linea 50
      - Se debe de poner el nombre del diccionario donde se van a guardar los valores de las perdidas (Este diccionario debe de estar dentro del mismo archivo que mandamos a llamar en la linea 11)
 
-- evaluate/eval.py
+- **evaluate/eval.py**
    - linea 11
    - linea 16 
+     - Se debe de actualizar el path del checkpoint que queremos evaluar.
 
-- ./utils/draw.py
+- **./utils/draw.py**
    - linea 33 y 54
      - Se debe de actualizar la ruta de donde esta el **.json** 
    - linea 65
    - linea 78
 
-- ./average.py
+- **./average.py**
    - linea 3
 
-- ./graficar.py
+- **./graficar.py**
    - linea 8
    - linea 9
    - linea 10

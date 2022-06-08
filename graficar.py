@@ -4,9 +4,9 @@ import json
 
 epoch = 232
 
-filename2 = '/home/bringascastle/Escritorio/resultados_ssd_lite_transfer/losses.json' #TransferLearning
-filename1 = '//home/bringascastle/Escritorio/resultados_ssd_lite_finetunning/losses.json' #FineTuning
-filename3 = '/home/bringascastle/Documentos/repos/SSD/results/losses_FROM.json' #FromScratch
+filename2 = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_TransferLearning.json' #TransferLearning
+filename1 = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_FineTuning.json' #FineTuning
+filename3 = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_FromScratch.json' #FromScratch
 
 with open(filename1, "r") as file:
     finetunning = json.load(file)
@@ -26,18 +26,18 @@ def getArray(data):
 
 epoch = range(1, epoch , 1)
 
-a, b, c = getArray(finetunning['loss_value']), getArray(transfer['loss_value']), getArray(fromscratch['loss_value'])
+a, b, c = getArray(finetunning['Losses_FineTuning']), getArray(transfer['Losses_TransferLearning']), getArray(fromscratch['Losses_FromScratch'])
 
 epoch = range(1, len(a) + 1, 1)
-plt.plot ( epoch, a, 'r', label='Loss Finetunning' )
+plt.plot ( epoch, a, 'r', label='Loss Finetunning')
 epoch = range(1, len(b) + 1, 1)
-plt.plot ( epoch, b, 'b', label='Loss Transfer Learning' )
+plt.plot ( epoch, b, 'g', label='Loss Transfer Learning')
 epoch = range(1, len(c) + 1, 1)
-plt.plot ( epoch, c, 'g', label='Loss From Scratch' )
+plt.plot ( epoch, c, 'b', label='Loss From Scratch')
 #plt.plot ( epochs, data['loss_v'],  'b', label='Loss avg')
 plt.title ('Losses FCOS')
-plt.ylabel('loss')
-plt.xlabel('epochs')
+plt.ylabel('Loss')
+plt.xlabel('Epochs')
 
 plt.legend()
 plt.figure()

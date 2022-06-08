@@ -8,10 +8,9 @@ import time
 import json
 import sys
 
-
 def get_times(val, array):
     #Path de donde 
-    filename = '/home/bringascastle/Documentos/repos/SSD/results/losses.json'
+    filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_TransferLearning.json'
     entry1 = str(val)
     # 1. Read file contents
     with open(filename, "r") as file:
@@ -48,7 +47,7 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq):
         losses_reduced = sum(loss for loss in loss_dict_reduced.values())
 
         loss_value = losses_reduced.item()
-        get_times(loss_value,"loss_value")
+        get_times(loss_value,"Losses_TransferLearning")
 
         if not math.isfinite(loss_value):
             print("Loss is {}, stopping training".format(loss_value))

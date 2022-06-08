@@ -26,10 +26,10 @@ plt.plot(epochs, l1, 'r', label='loss from scratch')
 plt.plot(epochs, l2, 'b', label='loss transfer learning')
 plt.plot(epochs, l3, 'g', label='loss finetuning')
 
-plt.title('Losses SSD')
+plt.title('Losses FCOS')
 
-plt.ylabel('loss')
-plt.xlabel('epoch')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
 
 plt.legend()
 plt.figure()

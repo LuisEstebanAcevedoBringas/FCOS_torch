@@ -8,12 +8,12 @@ from tqdm import tqdm
 pp = PrettyPrinter()
 
 # Parameters
-data_folder = '/home/bringascastle/Documentos/repos/SSD/JSONfiles'
+data_folder = '/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles'
 keep_difficult = True  # difficult ground truth objects must always be considered in mAP calculation, because these objects DO exist!
-batch_size = 64
+batch_size = 16
 workers = 4
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-checkpoint = '/home/bringascastle/Documentos/repos/SSD/checkpoints/prueba_t.pth.rar'
+checkpoint = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/prueba_60_f.pth.rar'
 
 # Load model checkpoint that is to be evaluated
 checkpoint = torch.load(checkpoint)
