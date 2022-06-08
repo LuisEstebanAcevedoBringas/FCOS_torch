@@ -22,7 +22,7 @@
    - linea 50
      - Se debe de poner el nombre del diccionario donde se van a guardar los valores de las perdidas (Este diccionario debe de estar dentro del mismo archivo que mandamos a llamar en la linea 11)
 
-- **evaluate/eval.py**
+- **./evaluate/eval.py**
    - linea 11
    - linea 16 
      - Se debe de actualizar el path del checkpoint que queremos evaluar.
