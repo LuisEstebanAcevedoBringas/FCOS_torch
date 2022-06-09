@@ -1,11 +1,9 @@
 from FCOS import  FCOS_TransferLearning, FCOS_FineTuning, FCOS_FromScratch
-from create_dataset import VOCDataset, PascalVOCDataset, PennFudanDataset2
-from preferences.detect.engine import train_one_epoch, evaluate
+from preferences.detect.engine import train_one_epoch
 from preferences.detect.utils import collate_fn
 from transformation import get_transform
-from fileinput import filename
+from create_dataset import VOCDataset
 import torch
-import json
 import time
 
 def save_model(epoch, model, optim, name = None):
@@ -26,15 +24,15 @@ def save_model(epoch, model, optim, name = None):
 
     torch.save(state, filename)
 
-array = ["Losses_TransferLearning"]
+# array = ["Losses_TransferLearning"]
 
-filename = './results/Losses_TransferLearning.json'
-with open(filename, "r") as file:
-    datos = json.load(file)
-for i in array:
-    datos[i].clear()
-with open(filename, "w") as file:
-    json.dump(datos, file)
+# filename = './results/Losses_TransferLearning.json'
+# with open(filename, "r") as file:
+#     datos = json.load(file)
+# for i in array:
+#     datos[i].clear()
+# with open(filename, "w") as file:
+#     json.dump(datos, file)
 
 #Hiperparametros
 lr = 1e-4
@@ -83,7 +81,7 @@ def main(checkpoint = None):
         model = checkpoint['model']
         optimizer = checkpoint['optimizer']
 
-    # let's train it for 10 epochs
+    # let's train it for 232 epochs
     print(start_epoch)
     num_epochs = 232
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
@@ -114,6 +112,13 @@ def main(checkpoint = None):
 
         if epoch == 160:
             save_model(epoch, model, optimizer, "prueba_160_f")
+
+        if epoch == 180:
+            save_model(epoch, model, optimizer, "prueba_180_f")
+
+        if epoch == 200:
+            save_model(epoch, model, optimizer, "prueba_200_f")
+    
         #evaluate on the test dataset
         #evaluate(model, data_loader, device=device)
         save_model(epoch, model, optimizer)
@@ -123,4 +128,4 @@ def main(checkpoint = None):
 
     print("Tiempo_entrenamiento: ", tiempo_entrenamiento)
 
-main('/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/prueba_TransferLearning.pth.rar')
+main('/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/prueba_TransferLearning.pth.rar')

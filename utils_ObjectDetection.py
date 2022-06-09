@@ -1,5 +1,5 @@
-import torch
 import numpy as np
+import torch
 
 def get_batch_statistics(outputs, targets, iou_threshold):
     """ Compute true positives, predicted scores and predicted labels per sample """
@@ -15,7 +15,7 @@ def get_batch_statistics(outputs, targets, iou_threshold):
         # pred_labels = output['labels']
 
         true_positives = torch.zeros(output['boxes'].shape[0])   # 예측 객체 개수
- 
+
         annotations = targets[sample_i]  # actual
         target_labels = annotations['labels'] if len(annotations) else []
         if len(annotations):    # len(annotations) = 3

@@ -10,7 +10,7 @@ from tqdm import tqdm
 pp = PrettyPrinter()
 
 # Parameters
-data_folder = '/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles'
+#data_folder = '/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles'
 keep_difficult = True  # difficult ground truth objects must always be considered in mAP calculation, because these objects DO exist!
 batch_size = 16
 workers = 4
@@ -31,7 +31,6 @@ model.eval()
 #                                 keep_difficult=keep_difficult)
 # test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
 #                                           collate_fn=test_dataset.collate_fn, num_workers=workers, pin_memory=True)
-
 
 dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TEST', get_transform(True))
 
@@ -67,8 +66,6 @@ def meanAP(data_loader_test, model):
     
     print(f'mAP : {mAP}')
     print(f'AP : {AP}')
-
-    
 
 def make_prediction(model, img, threshold):
     model.eval()

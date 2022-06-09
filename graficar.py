@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from calendar import EPOCH
 import json
 
 epoch = 232

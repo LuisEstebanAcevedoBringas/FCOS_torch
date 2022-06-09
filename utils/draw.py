@@ -1,24 +1,23 @@
-from cv2 import imshow
-import torch
-import numpy as np
-import matplotlib.pyplot as plt
-import time
-import torchvision.transforms.functional as F
+from torchvision.transforms.functional import convert_image_dtype
 from torchvision.utils import draw_bounding_boxes
-import torchvision
-from torchvision.ops import nms
-
-plt.rcParams["savefig.bbox"] = 'tight'
-
+from PIL import Image, ImageDraw, ImageFont
+import torchvision.transforms.functional as F
 from torchvision.utils import make_grid
 from torchvision.io import read_image
-from pathlib import Path
-from torchvision.transforms.functional import convert_image_dtype
-import glob
-import random
-import json
-from PIL import Image, ImageDraw, ImageFont
 from torchvision import transforms
+from torchvision.ops import nms
+import matplotlib.pyplot as plt
+from pathlib import Path
+from cv2 import imshow
+import numpy as np
+import torchvision
+import random
+import torch
+import time
+import glob
+import json
+
+plt.rcParams["savefig.bbox"] = 'tight'
 
 voc_labels = ('aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable',
               'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor')
@@ -30,7 +29,7 @@ distinct_colors = ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231', '#911e
 
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
 
-filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/losses.json'
+filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/LossesTransferLearning.json'
 
 # lab = ['NMS', 'general', 'draw', 'red']
 
@@ -43,11 +42,9 @@ filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/losses.json'
 # with open(filename, "w") as file:
 #     json.dump(datos, file)
 
-
+normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 resize = transforms.Resize((300, 300))
 to_tensor = transforms.ToTensor()
-normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
 
 #Get time TransferLearning
 def get_times(val, array):

@@ -5,7 +5,6 @@ import torch
 import json
 import os
 
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Label map
