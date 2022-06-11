@@ -6,7 +6,6 @@ import math
 #------- FCOS TransferLearning -------
 def FCOS_TransferLearning(num_classes):
     
-    #Returns a model pre-trained on COCO train2017
     model = torchvision.models.detection.fcos_resnet50_fpn(pretrained=True)
     
     #Congelar todos los pesos

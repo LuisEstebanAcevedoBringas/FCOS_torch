@@ -8,12 +8,12 @@ import time
 
 def save_model(epoch, model, optim, name = None):
     if name is None:
-        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/prueba_TransferLearning.pth.rar'
-        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/prueba_FineTuning.pth.rar'
+        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/prueba_TransferLearning.pth.rar'
+        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning.pth.rar'
         #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FromScratch/prueba_FromScratch.pth.rar'
     else:
-        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/{}.pth.rar'.format(name)
-        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/{}.pth.rar'.format(name)
+        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/{}.pth.rar'.format(name)
+        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/{}.pth.rar'.format(name)
         #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FromScratch/{}.pth.rar'.format(name)
     
     state = {
@@ -37,26 +37,29 @@ def save_model(epoch, model, optim, name = None):
 #Hiperparametros
 lr = 1e-4
 momentum = 0.9
-weight_decay = 8e-4
+weight_decay = 5e-4
+iterations = 120000
+decay_lr_at = [80000, 100000]
 
 def main(checkpoint = None):
     
-    global lr, momentum, weight_decay, start_epoch
+    global lr, momentum, weight_decay, start_epoch, decay_lr_at
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    
     num_classes = 21
 
     dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TRAIN', get_transform(True))
     
     data_loader = torch.utils.data.DataLoader(
-        dataset, batch_size=8, shuffle=True, num_workers=4,
+        dataset, batch_size=4, shuffle=True, num_workers=4,
         collate_fn=collate_fn)
 
     if checkpoint is None:
         
         start_epoch = 0
-        model = FCOS_TransferLearning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a TL
-        #model = FCOS_FineTuning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a FT
+        #model = FCOS_TransferLearning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a TL
+        model = FCOS_FineTuning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a FT
         #model = FCOS_FromScratch(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a FS
         model.to(device)
 
@@ -81,46 +84,37 @@ def main(checkpoint = None):
         model = checkpoint['model']
         optimizer = checkpoint['optimizer']
 
-    # let's train it for 232 epochs
+    # let's train
     print(start_epoch)
+
     num_epochs = 232
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
-    frontera = 40
+    
+    decay_lr_at = [it // (len(dataset) // 32) for it in decay_lr_at]
 
     tiempo_entrenamiento = time.time()
-    for epoch in range(start_epoch ,num_epochs):
-        # train for one epoch, printing every 200 iterations
-        train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq=200)
-        # update the learning rate
-        if not epoch < frontera:
-            lr_scheduler.step()
 
-        if epoch == 39:
-            save_model(epoch, model, optimizer, "prueba_39_f")
+    for epoch in range(start_epoch ,num_epochs):
+
+        if epoch in decay_lr_at:
+            adjust_learning_rate(optimizer, 0.1)
+
+        train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq = 200)
 
         if epoch == 60:
-            save_model(epoch, model, optimizer, "prueba_60_f")
-        
-        if epoch == 80:
-            save_model(epoch, model, optimizer, "prueba_80_f")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_60")
 
         if epoch == 100:
-            save_model(epoch, model, optimizer, "prueba_100_f")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_100")
 
-        if epoch == 130:
-            save_model(epoch, model, optimizer, "prueba_130_f")
+        if epoch == 154:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_154")
 
-        if epoch == 160:
-            save_model(epoch, model, optimizer, "prueba_160_f")
+        if epoch == 195:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_195")
 
-        if epoch == 180:
-            save_model(epoch, model, optimizer, "prueba_180_f")
+        if epoch == 215:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_215")
 
-        if epoch == 200:
-            save_model(epoch, model, optimizer, "prueba_200_f")
-    
-        #evaluate on the test dataset
-        #evaluate(model, data_loader, device=device)
         save_model(epoch, model, optimizer)
 
     tiempo_entrenamiento = time.time() - tiempo_entrenamiento
@@ -128,4 +122,14 @@ def main(checkpoint = None):
 
     print("Tiempo_entrenamiento: ", tiempo_entrenamiento)
 
-main('/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/prueba_TransferLearning.pth.rar')
+def adjust_learning_rate(optimizer, scale):
+    """
+    Scale learning rate by a specified factor.
+    :param optimizer: optimizer whose learning rate must be shrunk.
+    :param scale: factor to multiply learning rate with.
+    """
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = param_group['lr'] * scale
+    print("DECAYING learning rate.\n The new LR is %f\n" % (optimizer.param_groups[1]['lr'],))
+
+main()
