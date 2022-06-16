@@ -1,17 +1,9 @@
 from torchvision.transforms.functional import convert_image_dtype
 from torchvision.utils import draw_bounding_boxes
-from PIL import Image, ImageDraw, ImageFont
-import torchvision.transforms.functional as F
-from torchvision.utils import make_grid
 from torchvision.io import read_image
 from torchvision import transforms
-from torchvision.ops import nms
 import matplotlib.pyplot as plt
-from pathlib import Path
-from cv2 import imshow
-import numpy as np
 import torchvision
-import random
 import torch
 import time
 import glob
