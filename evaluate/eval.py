@@ -1,5 +1,6 @@
+import io
 from utils_ObjectDetection import get_batch_statistics,ap_per_class
-from create_dataset import VOCDataset, PascalVOCDataset
+from create_dataset import VOCDataset, PascalVOCDataset,Dataset_G
 from preferences.detect.utils import collate_fn
 from transformation import get_transform
 from evaluate.utils_map import *
@@ -10,12 +11,13 @@ from tqdm import tqdm
 pp = PrettyPrinter()
 
 # Parameters
-#data_folder = '/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles'
+data_folder = '/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles'
 keep_difficult = True  # difficult ground truth objects must always be considered in mAP calculation, because these objects DO exist!
 batch_size = 16
 workers = 4
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-checkpoint = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/prueba_60_f.pth.rar'
+#checkpoint = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_G.pth.rar'
+checkpoint = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning.pth.rar'
 
 # Load model checkpoint that is to be evaluated
 checkpoint = torch.load(checkpoint)
@@ -32,10 +34,12 @@ model.eval()
 # test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
 #                                           collate_fn=test_dataset.collate_fn, num_workers=workers, pin_memory=True)
 
+
 dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TEST', get_transform(True))
+#dataset = Dataset_G('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles_G', 'TEST', get_transform(True))
 
 data_loader = torch.utils.data.DataLoader(
-    dataset, batch_size=16, shuffle=False, num_workers=0,
+    dataset, batch_size=2, shuffle=False, num_workers=0,
     collate_fn=collate_fn)
 
 def meanAP(data_loader_test, model):
@@ -52,18 +56,17 @@ def meanAP(data_loader_test, model):
             labels += t['labels']
 
         with torch.no_grad():
-            preds_adj = make_prediction(model, im, 0.5)
+            preds_adj = make_prediction(model, im, 0.45)
             preds_adj = [{k: v.to(device) for k, v in t.items()} for t in preds_adj]
             preds_adj_all.append(preds_adj)
             annot_all.append(annot)
     
     sample_metrics = []
     for batch_i in range(len(preds_adj_all)):
-        sample_metrics += get_batch_statistics(preds_adj_all[batch_i], annot_all[batch_i], iou_threshold=0.5) 
+        sample_metrics += get_batch_statistics(preds_adj_all[batch_i], annot_all[batch_i], iou_threshold=0.45) 
     true_positives, pred_scores, pred_labels = [torch.cat(x, 0) for x in list(zip(*sample_metrics))]  # 배치가 전부 합쳐짐
     precision, recall, AP, f1, ap_class = ap_per_class(true_positives, pred_scores, pred_labels, torch.tensor(labels))
     mAP = torch.mean(AP)
-    
     print(f'mAP : {mAP}')
     print(f'AP : {AP}')
 
@@ -80,6 +83,8 @@ def make_prediction(model, img, threshold):
         preds[id]['boxes'] = preds[id]['boxes'][idx_list]
         preds[id]['labels'] = preds[id]['labels'][idx_list]
         preds[id]['scores'] = preds[id]['scores'][idx_list]
+
+    return preds
 
 #-----------
 def evaluate(test_loader, model):

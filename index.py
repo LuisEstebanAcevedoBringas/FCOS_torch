@@ -1,15 +1,15 @@
 from FCOS import  FCOS_TransferLearning, FCOS_FineTuning, FCOS_FromScratch
 from preferences.detect.engine import train_one_epoch
+from create_dataset import VOCDataset,Dataset_G
 from preferences.detect.utils import collate_fn
 from transformation import get_transform
-from create_dataset import VOCDataset
 import torch
 import time
 
 def save_model(epoch, model, optim, name = None):
     if name is None:
         #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/prueba_TransferLearning.pth.rar'
-        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning.pth.rar'
+        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_G.pth.rar'
         #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FromScratch/prueba_FromScratch.pth.rar'
     else:
         #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/{}.pth.rar'.format(name)
@@ -47,9 +47,10 @@ def main(checkpoint = None):
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     
-    num_classes = 21
+    num_classes = 6
 
-    dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TRAIN', get_transform(True))
+    dataset = Dataset_G('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles_G', 'TRAIN', get_transform(True))
+    #dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TRAIN', get_transform(True))
     
     data_loader = torch.utils.data.DataLoader(
         dataset, batch_size=4, shuffle=True, num_workers=4,
@@ -100,20 +101,53 @@ def main(checkpoint = None):
 
         train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq = 200)
 
+        if epoch == 5:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_05")
+
+        if epoch == 10:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_10")
+
+        if epoch == 15:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_15")
+        
+        if epoch == 20:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_20")
+        
+        if epoch == 25:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_25")
+
+        if epoch == 30:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_30")
+
+        if epoch == 35:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_35")
+        
+        if epoch == 40:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_40")
+        
+        if epoch == 45:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_45")
+
+        if epoch == 50:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_50")
+
+        if epoch == 55:
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_55")
+
         if epoch == 60:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_60")
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_60")
 
         if epoch == 100:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_100")
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_100")
 
         if epoch == 154:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_154")
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_154")
 
         if epoch == 195:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_195")
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_195")
 
         if epoch == 215:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_epoca_215")
+            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_215")
 
         save_model(epoch, model, optimizer)
 

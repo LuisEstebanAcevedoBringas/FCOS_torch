@@ -1,10 +1,65 @@
-from evaluate.utils_map import transform
+from evaluate.utils_map import transform, transform_G
 from torch.utils.data import Dataset
 from PIL import Image
 import numpy as np
 import torch
 import json
 import os
+
+class Dataset_G(Dataset):
+    def __init__(self, root, split, transforms):
+        self.root = root
+        self.transforms = transforms
+        # load all image files, sorting them to
+        # ensure that they are aligned
+
+        self.split = split.upper()
+
+        assert self.split in {'TRAIN', 'TEST'}
+
+        self.data_folder = root
+
+        # Read data files
+        with open(os.path.join(root, self.split + '_images_G.json'), 'r') as j:
+            self.imgs = json.load(j)
+        with open(os.path.join(root, self.split + '_objects_G.json'), 'r') as j:
+            self.objects = json.load(j)
+
+    def __getitem__(self, idx):
+        # load images and masks
+        img_path = self.imgs[idx]
+
+        img = Image.open(img_path).convert("RGB")
+
+        # convert everything into a torch.Tensor
+        boxes = torch.as_tensor(self.objects[idx]['boxes'], dtype=torch.float32)
+        # there is only one class
+        #labels = torch.ones((len(self.objects[idx]['labels']),), dtype=torch.int64)
+
+        temp = torch.ones((len(self.objects[idx]['labels']),), dtype=torch.int64)
+        for i, j in enumerate(self.objects[idx]['labels']):
+            temp[i] = temp[i] * j
+        labels = temp
+
+        image_id = torch.tensor([idx])
+        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
+        # suppose all instances are not crowd
+        iscrowd = torch.zeros(len(self.objects[idx]['labels'],), dtype=torch.int64)
+
+
+        target = {}
+        target["boxes"] = boxes
+        target["labels"] = labels
+        target["image_id"] = image_id
+        target["area"] = area
+        target["iscrowd"] = iscrowd
+
+        if self.transforms is not None:
+            img, target = self.transforms(img, target)
+        return img, target
+
+    def __len__(self):
+        return len(self.imgs)
 
 class PascalVOCDataset(Dataset):
     """
