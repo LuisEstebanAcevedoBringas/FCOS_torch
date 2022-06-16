@@ -1,4 +1,3 @@
-import io
 from utils_ObjectDetection import get_batch_statistics,ap_per_class
 from create_dataset import VOCDataset, PascalVOCDataset,Dataset_G
 from preferences.detect.utils import collate_fn
