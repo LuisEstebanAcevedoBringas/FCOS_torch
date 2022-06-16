@@ -1,11 +1,10 @@
 import matplotlib.pyplot as plt
-from calendar import EPOCH
 import json
 
-#epoch = 232
 epoch = 5
 
 #filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_TransferLearning.json' #TransferLearning
+#filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_FineTuning.json' #FineTuning
 filename = '/home/fp/Escritorio/LuisBringas/FCOS/results_G/Losses_FineTuning_G.json' #FineTuning
 #filename= '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_FromScratch.json' #FromScratch
 
@@ -25,8 +24,9 @@ def getArray(data):
         a.append(float(data[i]))
     return a
 
-epoch = range(1, epoch , 1)
+#epoch = range(1, epoch , 1)
 
+#a = getArray(finetunning['Losses_FineTuning'])
 a = getArray(finetunning['Losses_FineTuning_G'])
 #a, b, c = getArray(finetunning['Losses_FineTuning']), getArray(transfer['Losses_TransferLearning']), getArray(fromscratch['Losses_FromScratch'])
 
@@ -37,6 +37,7 @@ plt.plot ( epoch, a, 'r', label='Loss Losses_FineTuning')
 #epoch = range(1, len(c) + 1, 1)
 #plt.plot ( epoch, c, 'b', label='Loss From Scratch')
 #plt.plot ( epochs, data['loss_v'],  'b', label='Loss avg')
+#plt.title ('Losses FCOS')
 plt.title ('Losses FCOS with new dataset')
 plt.ylabel('Loss')
 plt.xlabel('Epochs')
