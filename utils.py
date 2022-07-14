@@ -8,7 +8,7 @@ import os
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Label map
-G_labels = ("cloth","none","respirator","surgical","valve")
+G_labels = ("cloth", "none", "respirator", "surgical", "valve")
 #voc_labels = ('aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable','dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor')
 label_map = {k: v + 1 for v, k in enumerate(G_labels)}
 label_map['background'] = 0
@@ -19,7 +19,6 @@ rev_label_map = {v: k for k, v in label_map.items()}  # Inverse mapping
 distinct_colors = ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231']
 
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
-
 
 def parse_annotation_G(annotation_path):
     tree = ET.parse(annotation_path)
@@ -144,7 +143,6 @@ def create_data_lists(G_dataset_path, output_folder):
     print('\nThere are %d test images containing a total of %d objects. Files have been saved to %s.' % (
         len(test_images), n_objects, os.path.abspath(output_folder)))
 
-
 def decimate(tensor, m):
     """
     Decimate a tensor by a factor 'm', i.e. downsample by keeping every 'm'th value.
@@ -161,7 +159,6 @@ def decimate(tensor, m):
             tensor = tensor.index_select(dim=d, index=torch.arange(start=0, end=tensor.size(d), step=m[d]).long())
 
     return tensor
-
 
 def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, true_difficulties):
     """
@@ -297,7 +294,6 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
 
     return average_precisions, mean_average_precision
 
-
 def xy_to_cxcy(xy):
     """
     Convert bounding boxes from boundary coordinates (x_min, y_min, x_max, y_max) to center-size coordinates (c_x, c_y, w, h).
@@ -308,7 +304,6 @@ def xy_to_cxcy(xy):
     return torch.cat([(xy[:, 2:] + xy[:, :2]) / 2,  # c_x, c_y
                                 xy[:, 2:] - xy[:, :2]], 1)  # w, h
 
-
 def cxcy_to_xy(cxcy):
     """
     Convert bounding boxes from center-size coordinates (c_x, c_y, w, h) to boundary coordinates (x_min, y_min, x_max, y_max).
@@ -318,7 +313,6 @@ def cxcy_to_xy(cxcy):
     """
     return torch.cat([cxcy[:, :2] - (cxcy[:, 2:] / 2),  # x_min, y_min
                                 cxcy[:, :2] + (cxcy[:, 2:] / 2)], 1)  # x_max, y_max
-
 
 def cxcy_to_gcxgcy(cxcy, priors_cxcy):
     """
@@ -340,7 +334,6 @@ def cxcy_to_gcxgcy(cxcy, priors_cxcy):
     return torch.cat([(cxcy[:, :2] - priors_cxcy[:, :2]) / (priors_cxcy[:, 2:] / 10),  # g_c_x, g_c_y
                       torch.log(cxcy[:, 2:] / priors_cxcy[:, 2:]) * 5], 1)  # g_w, g_h
 
-
 def gcxgcy_to_cxcy(gcxgcy, priors_cxcy):
     """
     Decode bounding box coordinates predicted by the model, since they are encoded in the form mentioned above.
@@ -357,7 +350,6 @@ def gcxgcy_to_cxcy(gcxgcy, priors_cxcy):
     return torch.cat([gcxgcy[:, :2] * priors_cxcy[:, 2:] / 10 + priors_cxcy[:, :2],  # c_x, c_y
                       torch.exp(gcxgcy[:, 2:] / 5) * priors_cxcy[:, 2:]], 1)  # w, h
 
-
 def find_intersection(set_1, set_2):
     """
     Find the intersection of every box combination between two sets of boxes that are in boundary coordinates.
@@ -372,7 +364,6 @@ def find_intersection(set_1, set_2):
     upper_bounds = torch.min(set_1[:, 2:].unsqueeze(1), set_2[:, 2:].unsqueeze(0))  # (n1, n2, 2)
     intersection_dims = torch.clamp(upper_bounds - lower_bounds, min=0)  # (n1, n2, 2)
     return intersection_dims[:, :, 0] * intersection_dims[:, :, 1]  # (n1, n2)
-
 
 def find_jaccard_overlap(set_1, set_2):
     """
@@ -523,7 +514,6 @@ def random_crop(image, boxes, labels, difficulties):
 
             return new_image, new_boxes, new_labels, new_difficulties
 
-
 def flip(image, boxes):
     """
     Flip image horizontally.
@@ -542,7 +532,6 @@ def flip(image, boxes):
     new_boxes = new_boxes[:, [2, 1, 0, 3]]
 
     return new_image, new_boxes
-
 
 def resize(image, boxes, dims=(300, 300), return_percent_coords=True):
     """
@@ -567,7 +556,6 @@ def resize(image, boxes, dims=(300, 300), return_percent_coords=True):
         new_boxes = new_boxes * new_dims
 
     return new_image, new_boxes
-
 
 def photometric_distort(image):
     """
@@ -598,7 +586,6 @@ def photometric_distort(image):
             new_image = d(new_image, adjust_factor)
 
     return new_image
-
 
 def transform(image, boxes, labels, difficulties, split):
     """
@@ -656,7 +643,6 @@ def transform(image, boxes, labels, difficulties, split):
 
     return new_image, new_boxes, new_labels, new_difficulties
 
-
 def adjust_learning_rate(optimizer, scale):
     """
     Scale learning rate by a specified factor.
@@ -667,7 +653,6 @@ def adjust_learning_rate(optimizer, scale):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * scale
     print("DECAYING learning rate.\n The new LR is %f\n" % (optimizer.param_groups[1]['lr'],))
-
 
 def accuracy(scores, targets, k):
     """
@@ -684,7 +669,6 @@ def accuracy(scores, targets, k):
     correct_total = correct.view(-1).float().sum()  # 0D tensor
     return correct_total.item() * (100.0 / batch_size)
 
-
 def save_checkpoint(epoch, model, optimizer):
     """
     Save model checkpoint.
@@ -698,7 +682,6 @@ def save_checkpoint(epoch, model, optimizer):
                     'optimizer': optimizer}
     filename = 'checkpoint_ssd300.pth.tar'
     torch.save(state, filename)
-
 
 class AverageMeter(object):
     """
@@ -719,7 +702,6 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
-
 
 def clip_gradient(optimizer, grad_clip):
     """

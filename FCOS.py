@@ -23,8 +23,6 @@ def FCOS_TransferLearning(num_classes):
 
     model.head.classification_head.cls_logits = cls_logits
 
-    #FCOSClassificationHead(in_features, num_anchors, num_anchors)
-
     print(model)
     return model
 
@@ -42,8 +40,6 @@ def FCOS_FineTuning(num_classes):
     torch.nn.init.constant_(cls_logits.bias, -math.log((1 - 0.01) / 0.01))
 
     model.head.classification_head.cls_logits = cls_logits
-
-    #FCOSClassificationHead(in_features, num_anchors, num_classes)
     
     print(model)
     return model

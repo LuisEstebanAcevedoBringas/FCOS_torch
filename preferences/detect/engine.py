@@ -1,5 +1,5 @@
-from others.coco_utils import get_coco_api_from_dataset
-from others.coco_eval import CocoEvaluator
+from coco_utils.coco_utils import get_coco_api_from_dataset
+from coco_utils.coco_eval import CocoEvaluator
 import torchvision.models.detection.mask_rcnn
 import preferences.detect.utils as utils
 import torch

@@ -12,7 +12,7 @@ import json
 
 plt.rcParams["savefig.bbox"] = 'tight'
 
-G_labels = ("cloth","none","respirator","surgical","valve")
+G_labels = ("cloth", "none", "respirator", "surgical", "valve")
 #voc_labels = ('aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor')
 label_map = {k: v + 1 for v, k in enumerate(G_labels)}
 #label_map = {k: v + 1 for v, k in enumerate(voc_labels)}
