@@ -9,7 +9,7 @@ import time
 def save_model(epoch, model, optim, name = None):
     if name is None:
         #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/prueba_TransferLearning.pth.rar'
-        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_G.pth.rar'
+        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_Mask.pth.rar'
         #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FromScratch/prueba_FromScratch.pth.rar'
     else:
         #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/{}.pth.rar'.format(name)
@@ -39,21 +39,23 @@ lr = 1e-4
 momentum = 0.9
 weight_decay = 5e-4
 iterations = 120000
-decay_lr_at = [80000, 100000]
+decay_lr_at = [40 , 154, 193]
+batch_size = 4
 
 def main(checkpoint = None):
     
     global lr, momentum, weight_decay, start_epoch, decay_lr_at
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    
-    num_classes = 6
 
-    dataset = Dataset_G('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles_G', 'TRAIN', get_transform(True))
-    #dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TRAIN', get_transform(True))
+    num_classes = 6 #Mask Dataset
+    #num_classes = 21 #PascalVOC
+
+    dataset = Dataset_G('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles_G', 'TRAIN', get_transform(True)) #Mask Dataset
+    #dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TRAIN', get_transform(True)) #PascalVOC
     
     data_loader = torch.utils.data.DataLoader(
-        dataset, batch_size=4, shuffle=True, num_workers=4,
+        dataset, batch_size=batch_size, shuffle=True, num_workers=4,
         collate_fn=collate_fn)
 
     if checkpoint is None:
@@ -74,10 +76,10 @@ def main(checkpoint = None):
                 else:
                     not_biases.append(param)
 
-        optimizer = torch.optim.SGD(params=[{'params': biases, 'lr': 2 * lr}, {'params': not_biases}], 
-                                    lr=lr,
-                                    momentum=momentum, 
-                                    weight_decay=weight_decay)
+        optimizer = torch.optim.SGD(params=[{'params': biases, 'lr': 1 * lr}, {'params': not_biases}], 
+            lr=lr,
+            momentum=momentum, 
+            weight_decay=weight_decay)
     else:
 
         checkpoint = torch.load(checkpoint)
@@ -85,12 +87,12 @@ def main(checkpoint = None):
         model = checkpoint['model']
         optimizer = checkpoint['optimizer']
 
-    # let's train
+    # Empieza el entrenamiento
     print(start_epoch)
 
-    num_epochs = 232
+    num_epochs = 60
     
-    decay_lr_at = [it // (len(dataset) // 32) for it in decay_lr_at]
+    #decay_lr_at = [it // (len(dataset) // 32) for it in decay_lr_at]
 
     tiempo_entrenamiento = time.time()
 
@@ -99,55 +101,43 @@ def main(checkpoint = None):
         if epoch in decay_lr_at:
             adjust_learning_rate(optimizer, 0.1)
 
-        train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq = 200)
+        train_one_epoch(model, optimizer, data_loader, device, epoch,batch_size= len(data_loader), print_freq = 200)
 
         if epoch == 5:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_05")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_05")
 
         if epoch == 10:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_10")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_10")
 
         if epoch == 15:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_15")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_15")
         
         if epoch == 20:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_20")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_20")
         
         if epoch == 25:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_25")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_25")
 
         if epoch == 30:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_30")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_30")
 
         if epoch == 35:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_35")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_35")
         
         if epoch == 40:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_40")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_40")
         
         if epoch == 45:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_45")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_45")
 
         if epoch == 50:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_50")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_50")
 
         if epoch == 55:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_55")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_55")
 
         if epoch == 60:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_60")
-
-        if epoch == 100:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_100")
-
-        if epoch == 154:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_154")
-
-        if epoch == 195:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_195")
-
-        if epoch == 215:
-            save_model(epoch, model, optimizer, "Checkpoint_G_FT_epoca_215")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_60")
 
         save_model(epoch, model, optimizer)
 
@@ -166,4 +156,4 @@ def adjust_learning_rate(optimizer, scale):
         param_group['lr'] = param_group['lr'] * scale
     print("DECAYING learning rate.\n The new LR is %f\n" % (optimizer.param_groups[1]['lr'],))
 
-main()
+main("/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_Mask.pth.rar")

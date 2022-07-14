@@ -1,5 +1,5 @@
-from utils_ObjectDetection import get_batch_statistics,ap_per_class
 from create_dataset import VOCDataset, PascalVOCDataset,Dataset_G
+from utils_ObjectDetection import get_batch_statistics,ap_per_class
 from preferences.detect.utils import collate_fn
 from transformation import get_transform
 from evaluate.utils_map import *
@@ -10,13 +10,14 @@ from tqdm import tqdm
 pp = PrettyPrinter()
 
 # Parameters
-data_folder = '/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles'
+data_folder = '/home/fp/Escritorio/Tandas/Mike/JSONFiles' #JSON del Mask dataset
+#data_folder = '/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles' #Json del PascalVOC 
 keep_difficult = True  # difficult ground truth objects must always be considered in mAP calculation, because these objects DO exist!
 batch_size = 16
 workers = 4
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#checkpoint = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_G.pth.rar'
-checkpoint = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning.pth.rar'
+checkpoint = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FT_Mask_epoca_25.pth.rar'
+#checkpoint = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_VOC.pth.rar'
 
 # Load model checkpoint that is to be evaluated
 checkpoint = torch.load(checkpoint)
@@ -34,11 +35,11 @@ model.eval()
 #                                           collate_fn=test_dataset.collate_fn, num_workers=workers, pin_memory=True)
 
 
-dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TEST', get_transform(True))
-#dataset = Dataset_G('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles_G', 'TEST', get_transform(True))
+#dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TEST', get_transform(True))
+dataset = Dataset_G(data_folder, 'TEST', get_transform(True))
 
 data_loader = torch.utils.data.DataLoader(
-    dataset, batch_size=2, shuffle=False, num_workers=0,
+    dataset, batch_size=4, shuffle=False, num_workers=0,
     collate_fn=collate_fn)
 
 def meanAP(data_loader_test, model):

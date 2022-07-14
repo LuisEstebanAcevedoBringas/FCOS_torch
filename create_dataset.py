@@ -20,9 +20,9 @@ class Dataset_G(Dataset):
         self.data_folder = root
 
         # Read data files
-        with open(os.path.join(root, self.split + '_images_G.json'), 'r') as j:
+        with open(os.path.join(root, self.split + '_images.json'), 'r') as j:
             self.imgs = json.load(j)
-        with open(os.path.join(root, self.split + '_objects_G.json'), 'r') as j:
+        with open(os.path.join(root, self.split + '_objects.json'), 'r') as j:
             self.objects = json.load(j)
 
     def __getitem__(self, idx):
