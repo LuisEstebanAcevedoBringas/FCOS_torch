@@ -65,4 +65,3 @@ def FCOS_FromScratch(num_classes):
     
     print(model)
     return model
-
