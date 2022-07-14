@@ -6,7 +6,6 @@ import json
 import os
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#device = torch.device('cpu')
 
 # Label map
 G_labels = ("cloth","none","respirator","surgical","valve")
@@ -72,7 +71,6 @@ def parse_annotation(annotation_path):
 
     return {'boxes': boxes, 'labels': labels, 'difficulties': difficulties}
 
-
 #def create_data_lists(voc07_path, voc12_path, output_folder):
 def create_data_lists(G_dataset_path, output_folder):
     """
@@ -91,7 +89,6 @@ def create_data_lists(G_dataset_path, output_folder):
 
     # Training data
     #for path in [voc07_path, voc12_path]:
-
     # Find IDs of images in training data
     with open(os.path.join(G_dataset_path, 'ImageSets/Main/trainval.txt')) as f:
         ids = f.read().splitlines()
@@ -161,8 +158,7 @@ def decimate(tensor, m):
     assert tensor.dim() == len(m)
     for d in range(tensor.dim()):
         if m[d] is not None:
-            tensor = tensor.index_select(dim=d,
-                                         index=torch.arange(start=0, end=tensor.size(d), step=m[d]).long())
+            tensor = tensor.index_select(dim=d, index=torch.arange(start=0, end=tensor.size(d), step=m[d]).long())
 
     return tensor
 
@@ -310,7 +306,7 @@ def xy_to_cxcy(xy):
     :return: bounding boxes in center-size coordinates, a tensor of size (n_boxes, 4)
     """
     return torch.cat([(xy[:, 2:] + xy[:, :2]) / 2,  # c_x, c_y
-                      xy[:, 2:] - xy[:, :2]], 1)  # w, h
+                                xy[:, 2:] - xy[:, :2]], 1)  # w, h
 
 
 def cxcy_to_xy(cxcy):
@@ -321,7 +317,7 @@ def cxcy_to_xy(cxcy):
     :return: bounding boxes in boundary coordinates, a tensor of size (n_boxes, 4)
     """
     return torch.cat([cxcy[:, :2] - (cxcy[:, 2:] / 2),  # x_min, y_min
-                      cxcy[:, :2] + (cxcy[:, 2:] / 2)], 1)  # x_max, y_max
+                                cxcy[:, :2] + (cxcy[:, 2:] / 2)], 1)  # x_max, y_max
 
 
 def cxcy_to_gcxgcy(cxcy, priors_cxcy):
@@ -493,8 +489,7 @@ def random_crop(image, boxes, labels, difficulties):
             crop = torch.FloatTensor([left, top, right, bottom])  # (4)
 
             # Calculate Jaccard overlap between the crop and the bounding boxes
-            overlap = find_jaccard_overlap(crop.unsqueeze(0),
-                                           boxes)  # (1, n_objects), n_objects is the no. of objects in this image
+            overlap = find_jaccard_overlap(crop.unsqueeze(0), boxes)  # (1, n_objects), n_objects is the no. of objects in this image
             overlap = overlap.squeeze(0)  # (n_objects)
 
             # If not a single bounding box has a Jaccard overlap of greater than the minimum, try again
@@ -584,9 +579,9 @@ def photometric_distort(image):
     new_image = image
 
     distortions = [FT.adjust_brightness,
-                   FT.adjust_contrast,
-                   FT.adjust_saturation,
-                   FT.adjust_hue]
+                            FT.adjust_contrast,
+                            FT.adjust_saturation,
+                            FT.adjust_hue]
 
     random.shuffle(distortions)
 
@@ -641,8 +636,7 @@ def transform(image, boxes, labels, difficulties, split):
             new_image, new_boxes = expand(new_image, boxes, filler=mean)
 
         # Randomly crop image (zoom in)
-        new_image, new_boxes, new_labels, new_difficulties = random_crop(new_image, new_boxes, new_labels,
-                                                                         new_difficulties)
+        new_image, new_boxes, new_labels, new_difficulties = random_crop(new_image, new_boxes, new_labels, new_difficulties)
 
         # Convert Torch tensor to PIL image
         new_image = FT.to_pil_image(new_image)
@@ -700,8 +694,8 @@ def save_checkpoint(epoch, model, optimizer):
     :param optimizer: optimizer
     """
     state = {'epoch': epoch,
-             'model': model,
-             'optimizer': optimizer}
+                    'model': model,
+                    'optimizer': optimizer}
     filename = 'checkpoint_ssd300.pth.tar'
     torch.save(state, filename)
 

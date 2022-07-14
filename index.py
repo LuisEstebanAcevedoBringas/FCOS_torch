@@ -54,12 +54,9 @@ def main(checkpoint = None):
     dataset = Dataset_G('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles_G', 'TRAIN', get_transform(True)) #Mask Dataset
     #dataset = VOCDataset('/home/fp/Escritorio/LuisBringas/FCOS/JSONfiles', 'TRAIN', get_transform(True)) #PascalVOC
     
-    data_loader = torch.utils.data.DataLoader(
-        dataset, batch_size=batch_size, shuffle=True, num_workers=4,
-        collate_fn=collate_fn)
+    data_loader = torch.utils.data.DataLoader( dataset, batch_size=batch_size, shuffle=True, num_workers=4, collate_fn=collate_fn)
 
     if checkpoint is None:
-        
         start_epoch = 0
         #model = FCOS_TransferLearning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a TL
         model = FCOS_FineTuning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a FT
@@ -80,8 +77,8 @@ def main(checkpoint = None):
             lr=lr,
             momentum=momentum, 
             weight_decay=weight_decay)
-    else:
 
+    else:
         checkpoint = torch.load(checkpoint)
         start_epoch = checkpoint['epoch'] + 1
         model = checkpoint['model']

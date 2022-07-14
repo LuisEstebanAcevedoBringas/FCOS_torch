@@ -10,7 +10,6 @@ def _flip_coco_person_keypoints(kps, width):
     flipped_data[inds] = 0
     return flipped_data
 
-
 class Compose(object):
     def __init__(self, transforms):
         self.transforms = transforms
@@ -19,7 +18,6 @@ class Compose(object):
         for t in self.transforms:
             image, target = t(image, target)
         return image, target
-
 
 class RandomHorizontalFlip(object):
     def __init__(self, prob):
@@ -39,7 +37,6 @@ class RandomHorizontalFlip(object):
                 keypoints = _flip_coco_person_keypoints(keypoints, width)
                 target["keypoints"] = keypoints
         return image, target
-
 
 class ToTensor(object):
     def __call__(self, image, target):

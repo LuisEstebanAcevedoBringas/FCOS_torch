@@ -9,15 +9,15 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Label map
 voc_labels = ('aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable',
-              'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor')
+                        'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor')
 label_map = {k: v + 1 for v, k in enumerate(voc_labels)}
 label_map['background'] = 0
 rev_label_map = {v: k for k, v in label_map.items()}  # Inverse mapping
 
 # Color map for bounding boxes of detected objects from https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
 distinct_colors = ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
-                   '#d2f53c', '#fabebe', '#008080', '#000080', '#aa6e28', '#fffac8', '#800000', '#aaffc3', '#808000',
-                   '#ffd8b1', '#e6beff', '#808080', '#FFFFFF']
+                                '#d2f53c', '#fabebe', '#008080', '#000080', '#aa6e28', '#fffac8', '#800000', '#aaffc3', 
+                                '#808000', '#ffd8b1', '#e6beff', '#808080', '#FFFFFF']
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
 
 
@@ -135,8 +135,7 @@ def decimate(tensor, m):
     assert tensor.dim() == len(m)
     for d in range(tensor.dim()):
         if m[d] is not None:
-            tensor = tensor.index_select(dim=d,
-                                         index=torch.arange(start=0, end=tensor.size(d), step=m[d]).long())
+            tensor = tensor.index_select(dim=d, index=torch.arange(start=0, end=tensor.size(d), step=m[d]).long())
 
     return tensor
 
@@ -289,7 +288,7 @@ def xy_to_cxcy(xy):
     :return: bounding boxes in center-size coordinates, a tensor of size (n_boxes, 4)
     """
     return torch.cat([(xy[:, 2:] + xy[:, :2]) / 2,  # c_x, c_y
-                      xy[:, 2:] - xy[:, :2]], 1)  # w, h
+                                xy[:, 2:] - xy[:, :2]], 1)  # w, h
 
 
 def cxcy_to_xy(cxcy):
@@ -300,7 +299,7 @@ def cxcy_to_xy(cxcy):
     :return: bounding boxes in boundary coordinates, a tensor of size (n_boxes, 4)
     """
     return torch.cat([cxcy[:, :2] - (cxcy[:, 2:] / 2),  # x_min, y_min
-                      cxcy[:, :2] + (cxcy[:, 2:] / 2)], 1)  # x_max, y_max
+                                cxcy[:, :2] + (cxcy[:, 2:] / 2)], 1)  # x_max, y_max
 
 
 def cxcy_to_gcxgcy(cxcy, priors_cxcy):
@@ -472,8 +471,7 @@ def random_crop(image, boxes, labels):
             crop = torch.FloatTensor([left, top, right, bottom])  # (4)
 
             # Calculate Jaccard overlap between the crop and the bounding boxes
-            overlap = find_jaccard_overlap(crop.unsqueeze(0),
-                                           boxes)  # (1, n_objects), n_objects is the no. of objects in this image
+            overlap = find_jaccard_overlap(crop.unsqueeze(0), boxes)  # (1, n_objects), n_objects is the no. of objects in this image
             overlap = overlap.squeeze(0)  # (n_objects)
 
             # If not a single bounding box has a Jaccard overlap of greater than the minimum, try again
@@ -563,9 +561,9 @@ def photometric_distort(image):
     new_image = image
 
     distortions = [FT.adjust_brightness,
-                   FT.adjust_contrast,
-                   FT.adjust_saturation,
-                   FT.adjust_hue]
+                            FT.adjust_contrast,
+                            FT.adjust_saturation,
+                            FT.adjust_hue]
 
     random.shuffle(distortions)
 
@@ -677,7 +675,7 @@ def transform(image, boxes, labels, difficulties, split):
 
         # Randomly crop image (zoom in)
         new_image, new_boxes, new_labels, new_difficulties = random_crop(new_image, new_boxes, new_labels,
-                                                                         new_difficulties)
+                                                                            new_difficulties)
 
         # Convert Torch tensor to PIL image
         new_image = FT.to_pil_image(new_image)
@@ -735,8 +733,8 @@ def save_checkpoint(epoch, model, optimizer):
     :param optimizer: optimizer
     """
     state = {'epoch': epoch,
-             'model': model,
-             'optimizer': optimizer}
+                'model': model,
+                'optimizer': optimizer}
     filename = 'checkpoint_ssd300.pth.tar'
     torch.save(state, filename)
 
