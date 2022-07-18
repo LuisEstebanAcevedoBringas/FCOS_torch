@@ -3,11 +3,11 @@ from glob import glob
 import json
 import os
 
-labels = { 1: 'cloth', 2: 'none', 3: 'respirator', 4: 'surgical', 5: 'valve'}
+labels = {-1: 'other', 0: 'cloth', -1: 'other', 1: 'none', 2: 'respirator', 3: 'surgical', 4: 'valve'}
 
-roots = '/home/fp/Escritorio/Tandas/Mike/'
-#roots = '/Users/agustincastillo/Downloads/JPEGImages04res/'
-carpeta_imagenes = 'JPEGImages06valve'
+conjunto = 'TEST'  # Para saber que tipo de conjunto se va a pasar json
+roots = '/Users/agustincastillo/Downloads/JPEGImages04res/'  # Raiz de la carpeta
+carpeta_imagenes = 'JPEGImages04res'  # Carpeta de las imagenes
 
 def getPathImgXML(root, annotations='annotations', images='images'):
     '''
@@ -47,31 +47,29 @@ def getPathImgXML(root, annotations='annotations', images='images'):
             imgs.pop(i)
             errors += 1
 
-    print("Hubieron {} inapropiadas y {} errores de deteccion". format(inapropiate, errors))
+    print("Se encontraron {} imagenes inapropiadas y {} errores de deteccion". format(inapropiate, errors))
     return annot, imgs
-
 
 def generateJSONFile():
     '''
     Despues generaremos primero el json de las imagenes
     '''
-    annot, imgs = getPathImgXML(roots,annotations='Annotations', images=carpeta_imagenes)
+    annot, imgs = getPathImgXML(roots, annotations='Annotations', images=carpeta_imagenes)
 
     full = roots + 'JSONFiles'
     os.makedirs(full, exist_ok=True)
 
-    file_name = 'TEST_images.json'
+    file_name = conjunto + '_images.json'
 
     with open(os.path.join(full, file_name), 'w') as file:
         json.dump(imgs, file)
 
     print('Hay {} imagenes'.format(len(imgs)))
 
-    file_name = 'TEST_objects.json'
+    file_name = conjunto + '_objects.json'
 
     with open(os.path.join(full, file_name), 'w') as file:
         json.dump(getObjectsForXML(annot), file)
-
 
 def getObjectsForXML(annot):
 
@@ -104,7 +102,6 @@ def getObjectsForXML(annot):
         print('{} : {}'.format(j, i))
     return out
 
-
 def toDictionary(root):
     boxes = []
     labels = []
@@ -119,23 +116,9 @@ def toDictionary(root):
         ymax = int(bbox.find('ymax').text)
 
         boxes.append([xmin, ymin, xmax, ymax])
-
-        entry = -1
-
-        if  int(label)== 1:
-            entry = 1
-        elif int(label) == 3:
-            entry = 2
-        elif int(label)== 4:
-            entry = 3
-        elif int(label)== 5:
-            entry = 4
-        elif int(label)== 6:
-            entry = 5
-        
-        if entry != -1: 
-            labels.append(entry)
+        labels.append(int(label))
 
     return {'boxes': boxes, 'labels': labels}, labels
+
 
 generateJSONFile()

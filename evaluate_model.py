@@ -1,3 +1,3 @@
-from evaluate.eval import runEvaluate
+from eval import runEvaluate
 
 runEvaluate()

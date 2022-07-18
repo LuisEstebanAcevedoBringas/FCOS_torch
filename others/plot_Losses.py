@@ -1,12 +1,9 @@
 import matplotlib.pyplot as plt
 import json
 
-epoch = 5
+epoch = 30
 
-#filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_TransferLearning.json' #TransferLearning
-#filename = '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_FineTuning.json' #FineTuning
 filename = '/home/fp/Escritorio/LuisBringas/FCOS/results_G/Losses_FineTuning_G.json' #FineTuning
-#filename= '/home/fp/Escritorio/LuisBringas/FCOS/results/Losses_FromScratch.json' #FromScratch
 
 with open(filename, "r") as file:
     finetunning = json.load(file)

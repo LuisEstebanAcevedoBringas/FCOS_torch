@@ -1,5 +1,5 @@
 from pycocotools import mask as coco_mask
-import preferences.detect.transforms as T
+import others.transforms as T
 from pycocotools.coco import COCO
 from PIL import Image
 import torch.utils.data

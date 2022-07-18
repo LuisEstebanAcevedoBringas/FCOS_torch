@@ -1,5 +1,5 @@
 from pycocotools.cocoeval import COCOeval
-import preferences.detect.utils as utils
+import others.coco_utils.utils as utils
 import pycocotools.mask as mask_util
 from pycocotools.coco import COCO
 from collections import defaultdict

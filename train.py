@@ -1,20 +1,16 @@
 from FCOS import  FCOS_TransferLearning, FCOS_FineTuning, FCOS_FromScratch
-from preferences.detect.engine import train_one_epoch
 from create_dataset import VOCDataset,Dataset_G
-from preferences.detect.utils import collate_fn
 from transformation import get_transform
+from engine import train_one_epoch
+from FCOS_utils import collate_fn
 import torch
 import time
 
 def save_model(epoch, model, optim, name = None):
     if name is None:
-        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/prueba_TransferLearning.pth.rar'
-        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_Mask.pth.rar'
-        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FromScratch/prueba_FromScratch.pth.rar'
+        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/MM_Dataset/Checkpoint_FineTuning_MM_Dataset.pth.rar'
     else:
-        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/TransferLearning/{}.pth.rar'.format(name)
-        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/{}.pth.rar'.format(name)
-        #filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FromScratch/{}.pth.rar'.format(name)
+        filename = '/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/MM_Dataset/{}.pth.rar'.format(name)
     
     state = {
         'epoch': epoch,
@@ -39,7 +35,7 @@ lr = 1e-4
 momentum = 0.9
 weight_decay = 5e-4
 iterations = 120000
-decay_lr_at = [40 , 154, 193]
+decay_lr_at = [20 , 25]
 batch_size = 4
 
 def main(checkpoint = None):
@@ -57,7 +53,7 @@ def main(checkpoint = None):
     data_loader = torch.utils.data.DataLoader( dataset, batch_size=batch_size, shuffle=True, num_workers=4, collate_fn=collate_fn)
 
     if checkpoint is None:
-        start_epoch = 0
+        start_epoch = 1
         #model = FCOS_TransferLearning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a TL
         model = FCOS_FineTuning(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a FT
         #model = FCOS_FromScratch(num_classes) #LLamamos la funcion para cambiar el metodo de entrenamiento a FS
@@ -87,10 +83,8 @@ def main(checkpoint = None):
     # Empieza el entrenamiento
     print(start_epoch)
 
-    num_epochs = 60
+    num_epochs = 30
     
-    #decay_lr_at = [it // (len(dataset) // 32) for it in decay_lr_at]
-
     tiempo_entrenamiento = time.time()
 
     for epoch in range(start_epoch ,num_epochs):
@@ -101,40 +95,37 @@ def main(checkpoint = None):
         train_one_epoch(model, optimizer, data_loader, device, epoch,batch_size= len(data_loader), print_freq = 200)
 
         if epoch == 5:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_05")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_05")
 
         if epoch == 10:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_10")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_10")
 
         if epoch == 15:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_15")
-        
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_15")
+
         if epoch == 20:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_20")
-        
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_20")
+
+        if epoch == 21:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_21")
+
+        if epoch == 24:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_24")
+
         if epoch == 25:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_25")
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_25")
 
-        if epoch == 30:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_30")
+        if epoch == 26:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_26")
 
-        if epoch == 35:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_35")
-        
-        if epoch == 40:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_40")
-        
-        if epoch == 45:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_45")
+        if epoch == 27:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_27")
 
-        if epoch == 50:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_50")
+        if epoch == 28:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_28")
 
-        if epoch == 55:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_55")
-
-        if epoch == 60:
-            save_model(epoch, model, optimizer, "Checkpoint_FT_Mask_epoca_60")
+        if epoch == 29:
+            save_model(epoch, model, optimizer, "Checkpoint_FT_MM_Dataset_epoca_29")
 
         save_model(epoch, model, optimizer)
 
@@ -153,4 +144,4 @@ def adjust_learning_rate(optimizer, scale):
         param_group['lr'] = param_group['lr'] * scale
     print("DECAYING learning rate.\n The new LR is %f\n" % (optimizer.param_groups[1]['lr'],))
 
-main("/home/fp/Escritorio/LuisBringas/FCOS/checkpoints/FineTuning/Checkpoint_FineTuning_Mask.pth.rar")
+main() #Si existe un checkpoint, se debe de agregar la ruta aqui.

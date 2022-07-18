@@ -1,5 +1,5 @@
-from evaluate.utils_map import transform, transform_G
 from torch.utils.data import Dataset
+from FCOS_utils import transform
 from PIL import Image
 import numpy as np
 import torch
@@ -139,7 +139,6 @@ class PascalVOCDataset(Dataset):
 
         return images, boxes, labels, difficulties  # tensor (N, 3, 300, 300), 3 lists of N tensors each
 
-
 class VOCDataset(torch.utils.data.Dataset):
     def __init__(self, root, split, transforms):
         self.root = root
@@ -194,14 +193,6 @@ class VOCDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.imgs)
-
-
-import os
-import numpy as np
-import torch
-import torch.utils.data
-from PIL import Image
-
 
 class PennFudanDataset2(torch.utils.data.Dataset):
     def __init__(self, root, transforms=None):

@@ -68,7 +68,6 @@ class SmoothedValue(object):
             max=self.max,
             value=self.value)
 
-
 def all_gather(data):
     """
     Run all_gather on arbitrary picklable data (not necessarily tensors)
@@ -111,7 +110,6 @@ def all_gather(data):
 
     return data_list
 
-
 def reduce_dict(input_dict, average=True):
     """
     Args:
@@ -137,7 +135,6 @@ def reduce_dict(input_dict, average=True):
             values /= world_size
         reduced_dict = {k: v for k, v in zip(names, values)}
     return reduced_dict
-
 
 class MetricLogger(object):
     def __init__(self, delimiter="\t"):
@@ -228,10 +225,8 @@ class MetricLogger(object):
         print('{} Total time: {} ({:.4f} s / it)'.format(
             header, total_time_str, total_time / len(iterable)))
 
-
 def collate_fn(batch):
     return tuple(zip(*batch))
-
 
 def warmup_lr_scheduler(optimizer, warmup_iters, warmup_factor):
 
@@ -243,14 +238,12 @@ def warmup_lr_scheduler(optimizer, warmup_iters, warmup_factor):
 
     return torch.optim.lr_scheduler.LambdaLR(optimizer, f)
 
-
 def mkdir(path):
     try:
         os.makedirs(path)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-
 
 def setup_for_distributed(is_master):
     """
@@ -266,7 +259,6 @@ def setup_for_distributed(is_master):
 
     __builtin__.print = print
 
-
 def is_dist_avail_and_initialized():
     if not dist.is_available():
         return False
@@ -274,27 +266,22 @@ def is_dist_avail_and_initialized():
         return False
     return True
 
-
 def get_world_size():
     if not is_dist_avail_and_initialized():
         return 1
     return dist.get_world_size()
-
 
 def get_rank():
     if not is_dist_avail_and_initialized():
         return 0
     return dist.get_rank()
 
-
 def is_main_process():
     return get_rank() == 0
-
 
 def save_on_master(*args, **kwargs):
     if is_main_process():
         torch.save(*args, **kwargs)
-
 
 def init_distributed_mode(args):
     if 'RANK' in os.environ and 'WORLD_SIZE' in os.environ:

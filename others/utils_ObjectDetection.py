@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 
 def get_batch_statistics(outputs, targets, iou_threshold):
